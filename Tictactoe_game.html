@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet">
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.container {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+}
+
+.mode-selection {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  justify-content: center;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 15px 25px;
+  font-size: 1.1em;
+  border: 3px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.mode-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.mode-btn.active {
+  background: #667eea;
+  color: white;
+}
+
+.game-section {
+  display: none;
+}
+
+.game-section.active {
+  display: block;
+}
+
+.status {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #555;
+  min-height: 40px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-template-rows: repeat(3, 120px);
+  gap: 10px;
+  margin: 0 auto 30px;
+  justify-content: center;
+}
+
+.cell {
+  background: white;
+  border: 3px solid #667eea;
+  border-radius: 10px;
+  font-size: 3em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell:hover:not(.taken) {
+  background: #f0f0f0;
+  transform: scale(1.05);
+}
+
+.cell.taken {
+  cursor: not-allowed;
+}
+
+.cell.x {
+  color: #667eea;
+}
+
+.cell.o {
+  color: #764ba2;
+}
+
+.cell.winner {
+  background: #ffd700;    
+  animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.reset-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.2em;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.back-btn {
+  background: #b41ece;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  margin-top: 15px;
+  left: 100px;
+}
+
+.space-btn {
+  background: #10aad0;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.space-btn:hover {
+  background: #9a17b8;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(12, 12, 12, 0.604);
+}
+
+.back-btn:hover {
+  background: #9a17b8;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(12, 12, 12, 0.604);
+}
+
+.reset-btn:hover {
+  background: #3f0bb8e6;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(14, 15, 15, 0.908);
+}
+
+.score {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+
+#footer {
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #b41ece;
+  font-weight: bold;
+  
+}
+
+.score-item {
+  padding: 10px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.difficulty-selector {
+  margin-bottom: 20px;
+}
+
+.difficulty-btn {
+  padding: 8px 20px;
+  margin: 0 5px;
+  border: 2px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.difficulty-btn:hover {
+  background: #f0f0f0;
+}
+
+.difficulty-btn.active {
+  background: #667eea;
+  color: white;
+}
+@media (max-width: 600px) {
+  .board {
+    grid-template-columns: repeat(3, 80px);
+    grid-template-rows: repeat(3, 80px);
+    gap: 8px;
+  }
+
+  .cell {
+    font-size: 2em;
+  }
+
+  .mode-btn, .reset-btn {
+    padding: 10px 15px;
+    font-size: 1em;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="space-btn" id="back">Spacekit Games</button>
+    <h1>Tic Tac Toe</h1>
+    
+    <div class="mode-selection">
+      <button class="mode-btn active" id="friendModeBtn">👥 With Friends</button>
+      <button class="mode-btn" id="aiModeBtn">🤖 With AI</button>
+    </div>
+
+    <!-- Friends Mode -->
+    <div class="game-section active" id="friendMode">
+      <div class="score">
+        <div class="score-item">Player X: <span id="scoreXFriend">0</span></div>
+        <div class="score-item">Player O: <span id="scoreOFriend">0</span></div>
+        <div class="score-item">Ties: <span id="scoreTieFriend">0</span></div>
+      </div>
+      <div class="status" id="statusFriend">Player X's Turn</div>
+      <div class="board" id="boardFriend">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+      <button class="reset-btn" id="resetBtnFriend">New Game</button>
+    </div>
+
+    <!-- AI Mode -->
+    <div class="game-section" id="aiMode">
+      <div class="difficulty-selector">
+        <button class="difficulty-btn active" data-difficulty="easy">Easy</button>
+        <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+        <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+      </div>
+      <div class="score">
+        <div class="score-item">You: <span id="scoreXAI">0</span></div>
+        <div class="score-item">AI: <span id="scoreOAI">0</span></div>
+        <div class="score-item">Ties: <span id="scoreTieAI">0</span></div>
+      </div>
+      <div class="status" id="statusAI">Your Turn (X)</div>
+      <div class="board" id="boardAI">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+      <button class="reset-btn" id="resetBtnAI">New Game</button>
+      
+    </div>
+    <button class="back-btn" id="back">Back</button>
+    <div class="footer">
+      <p>Developed by Ankit ❤️</p>
+  </div>
+ 
+  <script>
+    // Mode switching
+const friendModeBtn = document.getElementById('friendModeBtn');
+const aiModeBtn = document.getElementById('aiModeBtn');
+const friendMode = document.getElementById('friendMode');
+const aiMode = document.getElementById('aiMode');
+
+
+
+friendModeBtn.addEventListener('click', () => {
+  friendModeBtn.classList.add('active');
+  aiModeBtn.classList.remove('active');
+  friendMode.classList.add('active');
+  aiMode.classList.remove('active');
+});
+
+aiModeBtn.addEventListener('click', () => {
+  aiModeBtn.classList.add('active');
+  friendModeBtn.classList.remove('active');
+  aiMode.classList.add('active');
+  friendMode.classList.remove('active');
+});
+
+// --- Friends Mode Logic ---
+const cellsFriend = document.querySelectorAll('#boardFriend .cell');
+const statusFriend = document.getElementById('statusFriend');
+const resetBtnFriend = document.getElementById('resetBtnFriend');
+const scoreXFriend = document.getElementById('scoreXFriend');
+const scoreOFriend = document.getElementById('scoreOFriend');
+const scoreTieFriend = document.getElementById('scoreTieFriend');
+
+let boardFriendState = Array(9).fill('');
+let currentPlayerFriend = 'X';
+let gameActiveFriend = true;
+let scoresFriend = { X: 0, O: 0, tie: 0 };
+
+const winPatterns = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+function handleCellClickFriend(e) {
+  const cell = e.target;
+  const index = cell.dataset.index;
+  if (boardFriendState[index] !== '' || !gameActiveFriend) return;
+
+  boardFriendState[index] = currentPlayerFriend;
+  cell.textContent = currentPlayerFriend;
+  cell.classList.add('taken', currentPlayerFriend.toLowerCase());
+
+  if (checkWin(boardFriendState)) {
+    highlightWinner(cellsFriend, boardFriendState);
+    statusFriend.textContent = `Player ${currentPlayerFriend} Wins! 🎉`;
+    scoresFriend[currentPlayerFriend]++;
+    updateScoreDisplayFriend();
+    gameActiveFriend = false;
+  } else if (boardFriendState.every(c => c !== '')) {
+    statusFriend.textContent = "It's a Tie! 🤝";
+    scoresFriend.tie++;
+    updateScoreDisplayFriend();
+    gameActiveFriend = false;
+  } else {
+    currentPlayerFriend = currentPlayerFriend === 'X' ? 'O' : 'X';
+    statusFriend.textContent = `Player ${currentPlayerFriend}'s Turn`;
+  }
+}
+
+function updateScoreDisplayFriend() {
+  scoreXFriend.textContent = scoresFriend.X;
+  scoreOFriend.textContent = scoresFriend.O;
+  scoreTieFriend.textContent = scoresFriend.tie;
+}
+
+function resetGameFriend() {
+  boardFriendState.fill('');
+  currentPlayerFriend = 'X';
+  gameActiveFriend = true;
+  statusFriend.textContent = `Player ${currentPlayerFriend}'s Turn`;
+  cellsFriend.forEach(c => c.textContent = '');
+  cellsFriend.forEach(c => c.classList.remove('taken','x','o','winner'));
+}
+
+cellsFriend.forEach(c => c.addEventListener('click', handleCellClickFriend));
+resetBtnFriend.addEventListener('click', resetGameFriend);
+
+// --- AI Mode Logic ---
+const cellsAI = document.querySelectorAll('#boardAI .cell');
+const statusAI = document.getElementById('statusAI');
+const resetBtnAI = document.getElementById('resetBtnAI');
+const scoreXAI = document.getElementById('scoreXAI');
+const scoreOAI = document.getElementById('scoreOAI');
+const scoreTieAI = document.getElementById('scoreTieAI');
+const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+
+let boardAIState = Array(9).fill('');
+let gameActiveAI = true;
+let scoresAI = { X: 0, O: 0, tie: 0 };
+let difficulty = 'easy';
+
+difficultyBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    difficultyBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    difficulty = btn.dataset.difficulty;
+    resetGameAI();
+  });
+});
+
+function handleCellClickAI(e) {
+  const cell = e.target;
+  const index = cell.dataset.index;
+  if (boardAIState[index] !== '' || !gameActiveAI) return;
+
+  makeMove(index, 'X', cellsAI, boardAIState);
+
+  if (checkWin(boardAIState)) {
+    highlightWinner(cellsAI, boardAIState);
+    statusAI.textContent = "You Win! 🎉";
+    scoresAI.X++;
+    updateScoreDisplayAI();
+    gameActiveAI = false;
+    return;
+  }
+
+  if (boardAIState.every(c => c !== '')) {
+    statusAI.textContent = "It's a Tie! 🤝";
+    scoresAI.tie++;
+    updateScoreDisplayAI();
+    gameActiveAI = false;
+    return;
+  }
+
+  statusAI.textContent = "AI is thinking...";
+  setTimeout(() => {
+    const aiMove = getAIMove();
+    makeMove(aiMove, 'O', cellsAI, boardAIState);
+
+    if (checkWin(boardAIState)) {
+      highlightWinner(cellsAI, boardAIState);
+      statusAI.textContent = "AI Wins! 🤖";
+      scoresAI.O++;
+      updateScoreDisplayAI();
+      gameActiveAI = false;
+    } else if (boardAIState.every(c => c !== '')) {
+      statusAI.textContent = "It's a Tie! 🤝";
+      scoresAI.tie++;
+      updateScoreDisplayAI();
+      gameActiveAI = false;
+    } else {
+      statusAI.textContent = "Your Turn (X)";
+    }
+  }, 500);
+}
+
+function makeMove(index, player, cells, board) {
+  board[index] = player;
+  cells[index].textContent = player;
+  cells[index].classList.add('taken', player.toLowerCase());
+}
+
+function getAIMove() {
+  if (difficulty === 'easy') return getRandomMove();
+  if (difficulty === 'medium') return Math.random() < 0.5 ? getBestMove() : getRandomMove();
+  return getBestMove();
+}
+
+function getRandomMove() {
+  const available = boardAIState.map((c,i)=>c===''?i:null).filter(i=>i!==null);
+  return available[Math.floor(Math.random()*available.length)];
+}
+
+function getBestMove() {
+  for (let i=0;i<9;i++){
+    if (boardAIState[i]===''){
+      boardAIState[i]='O';
+      if(checkWin(boardAIState)){boardAIState[i]='';return i;}
+      boardAIState[i]='';
+    }
+  }
+  for (let i=0;i<9;i++){
+    if (boardAIState[i]===''){
+      boardAIState[i]='X';
+      if(checkWin(boardAIState)){boardAIState[i]='';return i;}
+      boardAIState[i]='';
+    }
+  }
+  if (boardAIState[4]==='') return 4;
+  const corners=[0,2,6,8].filter(i=>boardAIState[i]==='');
+  if(corners.length>0) return corners[Math.floor(Math.random()*corners.length)];
+  return getRandomMove();
+}
+
+function updateScoreDisplayAI(){
+  scoreXAI.textContent=scoresAI.X;
+  scoreOAI.textContent=scoresAI.O;
+  scoreTieAI.textContent=scoresAI.tie;
+}
+
+function resetGameAI(){
+  boardAIState.fill('');
+  gameActiveAI=true;
+  statusAI.textContent="Your Turn (X)";
+  cellsAI.forEach(c=>{c.textContent='';c.classList.remove('taken','x','o','winner');});
+}
+
+cellsAI.forEach(c=>c.addEventListener('click',handleCellClickAI));
+resetBtnAI.addEventListener('click',resetGameAI);
+
+// --- Shared Functions ---
+function checkWin(board){
+  return winPatterns.some(p=>{
+    const[a,b,c]=p;
+    return board[a] && board[a]===board[b] && board[a]===board[c];
+  });
+}
+
+function highlightWinner(cells,board){
+  winPatterns.forEach(p=>{
+    const[a,b,c]=p;
+    if(board[a] && board[a]===board[b] && board[a]===board[c]){
+      cells[a].classList.add('winner');
+      cells[b].classList.add('winner');
+      cells[c].classList.add('winner');
+    }
+  });
+}
+
+// Back button functionality
+    document.getElementById('back').addEventListener('click', function() {
+      console.log('Back button clicked');
+      window.location.href = 'https://ankitai.onrender.com/';
+    });
+
+  // Back button functionality
+    document.getElementById('back').addEventListener('click', function() {
+      console.log('Back button clicked');
+      window.location.href = 'https://spacekit.onrender.com/';
+    });
+  </script>
+</body>
+</html>
